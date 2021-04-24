@@ -33,7 +33,7 @@ class TestPicoYPlaca(unittest.TestCase):
         """
         plate = 'EBA-0234'  # private vehicle
         now = datetime.now()
-        date, tm = now.strftime("%Y-%m-%d %H:%M:%s").split()
+        date, tm = now.strftime("%Y-%m-%d %H:%M:%S").split()
         with self.assertRaises(ValueError):
             result = PicoPlaca(plate, date, tm).predict()
 
