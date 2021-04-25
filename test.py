@@ -17,6 +17,7 @@ class TestPicoYPlaca(unittest.TestCase):
         with self.assertRaises(ValueError):
             result = PicoPlaca(plate, date, tm).predict()
 
+    
     def test_invalid_date(self):
         """
         Test that invalid date raises ValueError
@@ -27,6 +28,7 @@ class TestPicoYPlaca(unittest.TestCase):
         with self.assertRaises(ValueError):
             result = PicoPlaca(plate, date, tm).predict()
 
+    
     def test_invalid_time(self):
         """
         Test that invalid time raises ValueError
@@ -37,6 +39,7 @@ class TestPicoYPlaca(unittest.TestCase):
         with self.assertRaises(ValueError):
             result = PicoPlaca(plate, date, tm).predict()
 
+    
     def test_missing_key(self):
         """
         Test that missing API key raises requests.HTTPError
@@ -54,52 +57,90 @@ class TestPicoYPlaca(unittest.TestCase):
 
     def test_holiday(self):
         """
-        Test that holidays are not restricted
+        Test that moved new holidays are restricted
         """
-        date = '2021-12-25'  # Christmas
-        plate = "EBA-0234"  # private vehicle
-        tm = '08:30'  # within peak hours
+        date = '2021-04-30'  # Moved Labour Day, Friday
+        plate = "EBA-0239"  # private vehicle prohibited on Fridays
+        tm = '17:00'  # within peak hours
         result = PicoPlaca(plate, date, tm).predict()
         self.assertTrue(result)
+
+
+    def test_holiday2(self):
+        """
+        Test that moved would-have-been holidays are not restricted
+        """
+        date = '2021-08-10'  # Would have been First Cry of Independence - moved, Tuesday
+        plate = "EBA-0234"  # private vehicle prohibited on Tuesdays
+        tm = '17:00'  # within peak hours
+        result = PicoPlaca(plate, date, tm).predict()
+        self.assertFalse(result)
+
+
+    def test_holiday3(self):
+        """
+        Test that moved would-have-been continuous holidays are not restricted
+        """
+        date = '2021-11-03'  # Would have been Independence of Cuenca - moved, Wednesday
+        plate = "EBA-0236"  # private vehicle prohibited on Wednesdays
+        tm = '17:00'  # within peak hours
+        result = PicoPlaca(plate, date, tm).predict()
+        self.assertFalse(result)
+
 
     def test_weekend(self):
         """
         Test that weekends are not restricted
         """
-        date = '2021-04-24'  # Saturday
+        date = '2021-04-25'  # Sunday
         plate = 'EBA-0234'  # private vehicle
-        tm = '08:30'  # within peak hours
+        tm = '17:00'  # within peak hours
         result = PicoPlaca(plate, date, tm).predict()
         self.assertTrue(result)
+
 
     def test_outside_peak_hours(self):
         """
         Test that time outside of not peak hours are not restricted
         """
-        date = '2021-04-19'  # Monday
-        plate = 'EBA-0232'  # private vehicles' plates ending with 2 are restricted on Mondays
-        tm = '15:30'  # outside peak hours
+        date = '2021-04-27'  # Tuesday
+        plate = 'EBA-0234'  # private vehicle prohibited on Tuesdays
+        tm = '20:00'  # outside peak hours
         result = PicoPlaca(plate, date, tm).predict()
         self.assertTrue(result)
 
+
     def test_vehicle(self):
         """
-        Test that public vehicles are not restricted
+        Test that governemental vehicles are not restricted
         """
-        date = '2021-04-19'  # Monday
-        # Governmental vehicle, plate ending in 1 (normally restricted on Mondays)
-        plate = 'PEB-0001'
-        tm = '08:30'  # within peak hours
+        date = '2021-04-27'  # Tuesday
+        # Governmental vehicle, plate ending in 4 (normally restricted on Mondays)
+        plate = 'AEC-0234'
+        tm = '17:00'  # within peak hours
         result = PicoPlaca(plate, date, tm).predict()
         self.assertTrue(result)
+
+
+    def test_vehicle2(self):
+        """
+        Test that diplomatic vehicles are not restricted
+        """
+        date = '2021-04-27'  # Tuesday
+        # Governmental vehicle, plate ending in 4 (normally restricted on Mondays)
+        plate = 'CD-0234'
+        tm = '17:00'  # within peak hours
+        result = PicoPlaca(plate, date, tm).predict()
+        self.assertTrue(result)
+
 
     def test_restricted(self):
         """
         Test restricted case
         """
-        date = '2021-04-19'  # Monday
-        plate = 'EBA-0232'  # private vehicles' plates ending with 2 are restricted on Mondays
-        tm = '19:00'  # within peak hours
+        date = '2021-04-27'  # Tuesday
+        plate = 'EBA-0234'  # private vehicles' plates ending with 4 are restricted on Tuesdays
+        tm = '17:00'  # within peak hours
         result = PicoPlaca(plate, date, tm).predict()
         self.assertFalse(result)
         
