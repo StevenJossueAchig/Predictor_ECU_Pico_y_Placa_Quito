@@ -10,12 +10,35 @@ from holidays.constants import JAN, MAY, AUG, OCT, NOV, DEC
 from holidays.holiday_base import HolidayBase
 
 
-class Ecuador(HolidayBase):
-    # https://viajala.com.ec/blog/calendario-dias-feriados-ecuador-actualizado
-    # https://es.wikipedia.org/wiki/Cuaresma
-    # https://es.wikipedia.org/wiki/ISO_3166-2:EC
+class HolidayEcuador(HolidayBase):
+    """
+    A class to represent a Holiday in Ecuador by province (HolidayEcuador)
+    It aims to make determining whether a 
+    specific date is a holiday as fast and flexible as possible.
+    It inherits the HolidayBase class of holidays.
+    https://www.turismo.gob.ec/wp-content/uploads/2020/03/CALENDARIO-DE-FERIADOS.pdf
+    -Document related to lent
+    https://es.wikipedia.org/wiki/Cuaresma    
+    -Regularation about rules that should be aplied when national 
+    and / or local holidays coincide in continuous days
+    https://www.ccq.ec/wp-content/uploads/2017/06/Consulta-Laboral-Diciembre-2016.pdf
+    https://www.trabajo.gob.ec/wp-content/uploads/downloads/2012/11/C%C3%B3digo-de-Tabajo-PDF.pdf
+    ...
 
+    Attributes
+    ----------
+    prov: str
+        province code according to ISO3166-2
+
+    Methods
+    -------
+    __init__(self, plate, date, time, online=False):
+        Constructs all the necessary attributes for the HolidayEcuador object.
+    _populate(self, year):
+        Returns dates that are holidays in a given year
+    """     
     # ISO 3166-2 codes for the principal subdivisions, called provinces
+    # https://es.wikipedia.org/wiki/ISO_3166-2:EC
     PROVINCES = ["EC-P"]  # TODO add more provinces
 
     def __init__(self, **kwargs):
@@ -26,7 +49,7 @@ class Ecuador(HolidayBase):
     def _populate(self, year):
         # New Year's Day
         self[datetime.date(year, JAN, 1)] = "Año Nuevo [New Year's Day]"
-
+        
         # Holy Week
         name_fri = "Semana Santa (Viernes Santo) [Good Friday)]"
         name_easter = "Día de Pascuas [Easter Day]"
@@ -77,6 +100,52 @@ class Ecuador(HolidayBase):
 
 
 class PicoPlaca:
+    """
+    A class to represent a vehicle restriction measure (Pico y Placa) - ORDENANZA METROPOLITANA No. 0305
+    http://www7.quito.gob.ec/mdmq_ordenanzas/Ordenanzas/ORDENANZAS%20A%C3%91OS%20ANTERIORES/ORDM-305-%20%20CIRCULACION%20VEHICULAR%20PICO%20Y%20PLACA.pdf
+    ...
+
+    Attributes
+    ----------
+    plate : str 
+        The registration or patent of a vehicle is a combination of alphabetic or numeric 
+        characters that identifies and individualizes the vehicle with respect to the others; 
+        The used format is XX-YYYY or XXX-YYYY, where X is a capital letter and Y is a digit.
+    date : str
+        Date on which the vehicle intends to transit
+        It is following the ISO 8601 format YYYY-MM-DD: e.g., 2020-04-22.
+    time : str
+        time in which the vehicle intends to transit
+        It is following the format HH:MM: e.g., 08:35, 19:30
+    online: boolean, optional
+        if online == True the abstract public holidays API will be used
+
+    Methods
+    -------
+    __init__(self, plate, date, time, online=False):
+        Constructs all the necessary attributes for the PicoPlaca object.
+    plate(self):
+        Gets the plate attribute value
+    plate(self, value):
+        Sets the plate attribute value
+    date(self):
+        Gets the date attribute value
+    date(self, value):
+        Sets the date attribute value
+    time(self):
+        Gets the time attribute value
+    time(self, value):
+        Sets the time attribute value
+    __find_day(self, date):
+        Returns the day from the date: e.g., Wednesday
+    __is_forbidden_time(self, check_time):
+        Returns True if provided time is inside the forbidden peak hours, otherwise False
+    __is_holiday:
+        Returns True if the checked date (in ISO 8601 format YYYY-MM-DD) is a public holiday in Ecuador, otherwise False
+    predict(self):
+        Returns True if the vehicle with the specified plate can be on the road at the specified date and time, otherwise False
+    """ 
+    #Days of the week
     __days = [
             "Monday",
             "Tuesday",
@@ -96,52 +165,165 @@ class PicoPlaca:
             "Saturday": [],
             "Sunday": []}
 
-    def __init__(self, plate, date, tm, online=False):
-        # plate is a string such as 'PEB-0001' or 'CD-0123'
-        # date is a string in ISO 8601 format YYYY-MM-DD, e.g.: 2020-04-22
-        # tm is a string representing time in format HH:MM, e.g.: 08:35
-        # if online == True the abstract public holidays API will be used
-
-        # Validate input
-        if not re.match('^[A-Z]{2,3}-[0-9]{4}$', plate):
-            raise ValueError(
-                'The plate must be in the following format: XX-YYYY or XXX-YYYY, where X is a capital letter and Y is a digit')
+    def __init__(self, plate, date, time, online=False):
+        """
+        Constructs all the necessary attributes for the PicoPlaca object.
         
-        try:
-            datetime.datetime.strptime(date, "%Y-%m-%d").strftime("%Y-%m-%d")
-        except ValueError:
-            raise ValueError(
-                'The date must be in the following format: YYYY-MM-DD (e.g.: 2021-04-02)')
-        
-        if not re.match('^([01][0-9]|2[0-3]):([0-5][0-9]|)$', tm):
-            raise ValueError(
-                'The time must be in the following format: HH:MM (e.g., 08:31, 14:22, 00:01)')
-        
+        Parameters
+        ----------
+            plate : str 
+                The registration or patent of a vehicle is a combination of alphabetic or numeric 
+                characters that identifies and individualizes the vehicle with respect to the others; 
+                The used format is AA-YYYY or XXX-YYYY, where X is a capital letter and Y is a digit.
+            date : str
+                Date on which the vehicle intends to transit
+                It is following the ISO 8601 format YYYY-MM-DD: e.g., 2020-04-22.
+            time : str
+                time in which the vehicle intends to transit
+                It is following the format HH:MM: e.g., 08:35, 19:30
+            online: boolean, optional
+                if online == True the abstract public holidays API will be used (default is False)               
+        """                
         self.plate = plate
         self.date = date
-        self.tm = tm
+        self.time = time
         self.online = online
 
 
+    @property
+    def plate(self):
+        """Gets the plate attribute value"""
+        return self._plate
+
+
+    @plate.setter
+    def plate(self, value):
+        """
+        Sets the plate attribute value
+
+        Parameters
+        ----------
+        value : str
+        
+        Raises
+        ------
+        ValueError
+            If value string is not formated as XX-YYYY or XXX-YYYY, where X is a capital letter and Y is a digit
+        """
+        if not re.match('^[A-Z]{2,3}-[0-9]{4}$', value):
+            raise ValueError(
+                'The plate must be in the following format: XX-YYYY or XXX-YYYY, where X is a capital letter and Y is a digit')
+        self._plate = value
+
+
+    @property
+    def date(self):
+        """Gets the date attribute value"""
+        return self._date
+
+
+    @date.setter
+    def date(self, value):
+        """
+        Sets the date attribute value
+
+        Parameters
+        ----------
+        value : str
+        
+        Raises
+        ------
+        ValueError
+            If value string is not formated as YYYY-MM-DD (e.g.: 2021-04-02)
+        """
+        try:
+            if len(value) != 10:
+                raise ValueError
+            datetime.datetime.strptime(value, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError(
+                'The date must be in the following format: YYYY-MM-DD (e.g.: 2021-04-02)') from None
+        self._date = value
+        
+
+    @property
+    def time(self):
+        """Gets the time attribute value"""
+        return self._time
+
+
+    @time.setter
+    def time(self, value):
+        """
+        Sets the time attribute value
+
+        Parameters
+        ----------
+        value : str
+        
+        Raises
+        ------
+        ValueError
+            If value string is not formated as HH:MM (e.g., 08:31, 14:22, 00:01)
+        """
+        if not re.match('^([01][0-9]|2[0-3]):([0-5][0-9]|)$', value):
+            raise ValueError(
+                'The time must be in the following format: HH:MM (e.g., 08:31, 14:22, 00:01)')
+        self._time = value
+
+
     def __find_day(self, date):
-        # Returns the day from the date, e.g.: Wednesday
-        # date is a string in ISO 8601 format YYYY-MM-DD, e.g.: 2020-04-22
+        """
+        Finds the day from the date: e.g., Wednesday
+
+        Parameters
+        ----------
+        date : str
+            It is following the ISO 8601 format YYYY-MM-DD: e.g., 2020-04-22
+
+        Returns
+        -------
+        Returns the day from the date as a string
+        """        
         d = datetime.datetime.strptime(date, '%Y-%m-%d').weekday()
         return self.__days[d]
 
 
     def __is_forbidden_time(self, check_time):
-        # Returns True if provided time is inside the forbidden peak hours, otherwise False
-        # Peak hours: 07:00 - 09:30 and 16:00 - 19:30
-        # check_time is a string in format HH:MM, e.g., 08:35
+        """
+        Checks if the time provided is within the prohibited peak hours,
+        where the peak hours are: 07:00 - 09:30 and 16:00 - 19:30
+
+        Parameters
+        ----------
+        check_time : str
+            Time that will be checked. It is in format HH:MM: e.g., 08:35, 19:15
+
+        Returns
+        -------
+        Returns True if provided time is inside the forbidden peak hours, otherwise False
+        """           
         t = datetime.datetime.strptime(check_time, '%H:%M').time()
         return ((t >= datetime.time(7, 0) and t <= datetime.time(9, 30)) or
                 (t >= datetime.time(16, 0) and t <= datetime.time(19, 30)))
 
 
     def __is_holiday(self, date, online):
-        # Returns True if the checked date (in ISO 8601 format YYYY-MM-DD) is a public holiday in Ecuador, otherwise False
-        # if online == True it will use a REST API, otherwise it will generate the holidays of the examined year
+        """
+        Checks if date (in ISO 8601 format YYYY-MM-DD) is a public holiday in Ecuador
+        if online == True it will use a REST API, otherwise it will generate the holidays of the examined year
+        
+        Parameters
+        ----------
+        date : str
+            It is following the ISO 8601 format YYYY-MM-DD: e.g., 2020-04-22
+        online: boolean, optional
+            if online == True the abstract public holidays API will be used        
+
+        Returns
+        -------
+        Returns True if the checked date (in ISO 8601 format YYYY-MM-DD) is a public holiday in Ecuador, otherwise False
+        """            
         y, m, d = date.split('-')
 
         if online:
@@ -162,13 +344,19 @@ class PicoPlaca:
                 return False
             return True
         else:
-            ecu_holidays = Ecuador(prov='EC-P')
+            ecu_holidays = HolidayEcuador(prov='EC-P')
             return date in ecu_holidays
 
 
     def predict(self):
-        # Returns True if the vehicle with the specified plate can be on the road at the specified date and time, otherwise False
-        
+        """
+        Checks if vehicle with the specified plate can be on the road on the provided date and time based on the Pico y Placa rules:
+        http://www7.quito.gob.ec/mdmq_ordenanzas/Ordenanzas/ORDENANZAS%20A%C3%91OS%20ANTERIORES/ORDM-305-%20%20CIRCULACION%20VEHICULAR%20PICO%20Y%20PLACA.pdf    
+
+        Returns
+        -------
+        Returns True if the vehicle with the specified plate can be on the road at the specified date and time, otherwise False
+        """
         # Check if date is a holiday
         if self.__is_holiday(self.date, self.online):
             return True
@@ -179,7 +367,7 @@ class PicoPlaca:
             return True
 
         # Check if provided time is not in the forbidden peak hours
-        if not self.__is_forbidden_time(self.tm):
+        if not self.__is_forbidden_time(self.time):
             return True
 
         day = self.__find_day(self.date)  # Find day of the week from date
