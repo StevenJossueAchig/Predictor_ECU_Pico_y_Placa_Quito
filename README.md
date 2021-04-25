@@ -29,16 +29,25 @@ optional arguments:
   -d DATE, --date DATE  the date to be checked: YYYY-MM-DD
   -t TIME, --time TIME  the time to be checked: HH:MM
 ```
+## Note 1. Format of the input data
+```
+Plate: following the [Ecuador car license plate format](https://es.wikipedia.org/wiki/Matr%C3%ADculas_automovil%C3%ADsticas_de_Ecuador), the parameter “Plate” should have this format: *XXX-YYY*  (commercial, government, official, and private vehicles) or *XX-YYYY* (diplomatic service and temporary hospitalization vehicles), where X is a capital letter, and Y is a digit. Example: *EBA-0234*, *CC-0012.*
+Date: considering the [ISO 8601](https://es.wikipedia.org/wiki/ISO_8601), the parameter “Date” should have the following format: *YYYY-MM-DD*. Examples: *2021-04-24*, *2020-09-10.*
+Time: the time must always be represented under the 24h system, that is, the number of hours that have elapsed since midnight. The 12h format is not allowed. Format: *HH:MM*, where HH and MM should be composed of two digits, respectively. Examples: *12:30, 21:10, 09:05, 00:00 (midnight).*
+To use the [abstract Public Holidays API](https://www.abstractapi.com/holidays-api) add the flag -o or --online. Otherwise, the predicator will use the class “HolidayEcaudor” to check if a date is a holiday or not.  The default option is offline.  
+```
 
-## Automated Testing
-
-[test.py](https://github.com/mmacas11/Predictor_ECU_Pico_y_Placa_Quito/blob/main/test.py) is used for executing unit tests automatically. The primary purpose is to confirm that each unit of the software code performs as expected. Unit Testing was done during the development (coding phase) of the predictor.
 ## Example
 
 ```
 $ python pico_y_placa.py -p EBA-0234 -d 2021-04-23 -t 15:15
 The vehicle with plate EBA-0234 CAN be on the road on 2021-04-23 at 15:15.
 ```
+
+## Automated Testing
+
+[test.py](https://github.com/mmacas11/Predictor_ECU_Pico_y_Placa_Quito/blob/main/test.py) is used for executing unit tests automatically. The primary purpose is to confirm that each unit of the software code performs as expected. Unit Testing was done during the development (coding phase) of the predictor.
+
 
 ## License
 
