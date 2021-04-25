@@ -1,6 +1,8 @@
 # pico-y-placa
 
 A "Pico y Placa" predictor. The inputs are a license plate number (the full number, not the last digit), a date (as a String), and a time, and the program returns whether or not that car can be on the road on the specified date and time.
+This predictor is developed according to the regulations of [the Municipal Ordinance of Quito No. 0305](http://www7.quito.gob.ec/mdmq_ordenanzas/Ordenanzas/ORDENANZAS%20A%C3%91OS%20ANTERIORES/ORDM-305-%20%20CIRCULACION%20VEHICULAR%20PICO%20Y%20PLACA.pdf).
+
 
 ## Requirements
 
