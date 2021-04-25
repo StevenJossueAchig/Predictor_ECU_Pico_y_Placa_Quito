@@ -30,6 +30,9 @@ optional arguments:
   -t TIME, --time TIME  the time to be checked: HH:MM
 ```
 
+## Automated Testing
+---
+[test.py](https://github.com/mmacas11/Predictor_ECU_Pico_y_Placa_Quito/blob/main/test.py) is used for executing unit tests automatically. The primary purpose is to confirm that each unit of the software code performs as expected. Unit Testing was done during the development (coding phase) of the predictor.
 ## Example
 
 ```
