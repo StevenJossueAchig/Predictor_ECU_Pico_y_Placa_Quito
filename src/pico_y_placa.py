@@ -72,16 +72,16 @@ class HolidayEcuador(HolidayBase):
         
         # Labor day
         name = "Día Nacional del Trabajo [Labour Day]"
-        # (Law 858) If the holiday falls on Saturday or Tuesday
+        # (Law 858/Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)) If the holiday falls on Saturday or Tuesday
         # the mandatory rest will go to the immediate previous Friday or Monday
         # respectively
         if year > 2015 and date(year, MAY, 1).weekday() in (5,1):
             self[date(year, MAY, 1) - timedelta(days=1)] = name
-        # (Law 858) if the holiday falls on Sunday
+        # (Law 858/Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)) if the holiday falls on Sunday
         # the mandatory rest will go to the following Monday
         elif year > 2015 and date(year, MAY, 1).weekday() == 6:
             self[date(year, MAY, 1) + timedelta(days=1)] = name
-        # (Law 858) Holidays that are on Wednesday or Thursday
+        # (Law 858/Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)) Holidays that are on Wednesday or Thursday
         # will be moved to the Friday of that week
         elif year > 2015 and  date(year, MAY, 1).weekday() in (2,3):
             self[date(year, MAY, 1) + rd(weekday=FR)] = name
@@ -125,7 +125,8 @@ class HolidayEcuador(HolidayBase):
         namedd = "Día de los difuntos [Day of the Dead]" 
         # Independence of Cuenca
         nameic = "Independencia de Cuenca [Independence of Cuenca]"
-        #(Law 858) National and/or local holidays coincide on continuous days, 
+        #(Law 858/Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)) 
+        #For national and/or local holidays that coincide on continuous days, 
         #the following rules will apply:
         if (date(year, NOV, 2).weekday() == 5 and  date(year, NOV, 3).weekday() == 6):
             self[date(year, NOV, 2) - timedelta(days=1)] = namedd
