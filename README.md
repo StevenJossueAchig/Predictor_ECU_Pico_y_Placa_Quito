@@ -12,7 +12,7 @@ The following libraries are required:
 
 * [holidays](https://pypi.org/project/holidays/)
 
-If you wish to use the [abstract Public Holidays API](https://www.abstractapi.com/holidays-api), save the API key in the enviroment variable HOLIDAYS_API_KEY.
+If you wish to use the [abstract Public Holidays API](https://www.abstractapi.com/holidays-api), save the API key in the enviroment variable HOLIDAYS_API_KEY. Note that this API excludes the rules of [Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)](https://biblioteca.defensoria.gob.ec/bitstream/37000/1683/1/LEY%20ORG%C3%81NICA%20REFORMATORIA%20A%20LA%20LEY%20ORG%C3%81NICA%20DEL%20SERVICIO%20P%C3%9ABLICO%20Y%20AL%20C%C3%93DIGO%20DEL%20TRABAJO.pdf) related to the Holidays in Ecuador. Nevertheless, the offline mode of the “Pico y Placa” predictor considers all rules of the law mentioned above.
 
 ## Usage
 
@@ -31,7 +31,7 @@ optional arguments:
 ```
 
 ## Automated Testing
----
+
 [test.py](https://github.com/mmacas11/Predictor_ECU_Pico_y_Placa_Quito/blob/main/test.py) is used for executing unit tests automatically. The primary purpose is to confirm that each unit of the software code performs as expected. Unit Testing was done during the development (coding phase) of the predictor.
 ## Example
 
