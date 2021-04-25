@@ -1,4 +1,3 @@
-from datetime import date, timedelta
 import datetime
 import requests
 import os
@@ -9,6 +8,7 @@ from dateutil.easter import easter
 from dateutil.relativedelta import relativedelta as rd, FR
 from holidays.constants import JAN, MAY, AUG, OCT, NOV, DEC
 from holidays.holiday_base import HolidayBase
+
 
 class HolidayEcuador(HolidayBase):
     """
@@ -56,10 +56,10 @@ class HolidayEcuador(HolidayBase):
         Returns true if a date is a holiday otherwise flase 
         """                    
         # New Year's Day 
-        self[date(year, JAN, 1)] = "Año Nuevo [New Year's Day]"
+        self[datetime.date(year, JAN, 1)] = "Año Nuevo [New Year's Day]"
         
         # Christmas
-        self[date(year, DEC, 25)] = "Navidad [Christmas]"
+        self[datetime.date(year, DEC, 25)] = "Navidad [Christmas]"
         
         # Holy Week
         self[easter(year) + rd(weekday=FR(-1))] = "Semana Santa (Viernes Santo) [Good Friday)]"
@@ -67,59 +67,59 @@ class HolidayEcuador(HolidayBase):
         
         # Carnival
         total_lent_days = 46
-        self[easter(year) - timedelta(days=total_lent_days+2)] = "Lunes de carnaval [Carnival of Monday)]"
-        self[easter(year) - timedelta(days=total_lent_days+1)] = "Martes de carnaval [Tuesday of Carnival)]"
+        self[easter(year) - datetime.timedelta(days=total_lent_days+2)] = "Lunes de carnaval [Carnival of Monday)]"
+        self[easter(year) - datetime.timedelta(days=total_lent_days+1)] = "Martes de carnaval [Tuesday of Carnival)]"
         
         # Labor day
         name = "Día Nacional del Trabajo [Labour Day]"
         # (Law 858/Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)) If the holiday falls on Saturday or Tuesday
         # the mandatory rest will go to the immediate previous Friday or Monday
         # respectively
-        if year > 2015 and date(year, MAY, 1).weekday() in (5,1):
-            self[date(year, MAY, 1) - timedelta(days=1)] = name
+        if year > 2015 and datetime.date(year, MAY, 1).weekday() in (5,1):
+            self[datetime.date(year, MAY, 1) - datetime.timedelta(days=1)] = name
         # (Law 858/Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)) if the holiday falls on Sunday
         # the mandatory rest will go to the following Monday
-        elif year > 2015 and date(year, MAY, 1).weekday() == 6:
-            self[date(year, MAY, 1) + timedelta(days=1)] = name
+        elif year > 2015 and datetime.date(year, MAY, 1).weekday() == 6:
+            self[datetime.date(year, MAY, 1) + datetime.timedelta(days=1)] = name
         # (Law 858/Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)) Holidays that are on Wednesday or Thursday
         # will be moved to the Friday of that week
-        elif year > 2015 and  date(year, MAY, 1).weekday() in (2,3):
-            self[date(year, MAY, 1) + rd(weekday=FR)] = name
+        elif year > 2015 and  datetime.date(year, MAY, 1).weekday() in (2,3):
+            self[datetime.date(year, MAY, 1) + rd(weekday=FR)] = name
         else:
-            self[date(year, MAY, 1)] = name
+            self[datetime.date(year, MAY, 1)] = name
         
         # Pichincha battle, the rules are the same as the labor day
         name = "Batalla del Pichincha [Pichincha Battle]"
-        if year > 2015 and date(year, MAY, 24).weekday() in (5,1):
-            self[date(year, MAY, 24).weekday() - timedelta(days=1)] = name
-        elif year > 2015 and date(year, MAY, 24).weekday() == 6:
-            self[date(year, MAY, 24) + timedelta(days=1)] = name
-        elif year > 2015 and  date(year, MAY, 24).weekday() in (2,3):
-            self[date(year, MAY, 24) + rd(weekday=FR)] = name
+        if year > 2015 and datetime.date(year, MAY, 24).weekday() in (5,1):
+            self[datetime.date(year, MAY, 24).weekday() - datetime.timedelta(days=1)] = name
+        elif year > 2015 and datetime.date(year, MAY, 24).weekday() == 6:
+            self[datetime.date(year, MAY, 24) + datetime.timedelta(days=1)] = name
+        elif year > 2015 and  datetime.date(year, MAY, 24).weekday() in (2,3):
+            self[datetime.date(year, MAY, 24) + rd(weekday=FR)] = name
         else:
-            self[date(year, MAY, 24)] = name        
+            self[datetime.date(year, MAY, 24)] = name        
         
         # First Cry of Independence, the rules are the same as the labor day
         name = "Primer Grito de la Independencia [First Cry of Independence]"
-        if year > 2015 and date(year, AUG, 10).weekday() in (5,1):
-            self[date(year, AUG, 10)- timedelta(days=1)] = name
-        elif year > 2015 and date(year, AUG, 10).weekday() == 6:
-            self[date(year, AUG, 10) + timedelta(days=1)] = name
-        elif year > 2015 and  date(year, AUG, 10).weekday() in (2,3):
-            self[date(year, AUG, 10) + rd(weekday=FR)] = name
+        if year > 2015 and datetime.date(year, AUG, 10).weekday() in (5,1):
+            self[datetime.date(year, AUG, 10)- datetime.timedelta(days=1)] = name
+        elif year > 2015 and datetime.date(year, AUG, 10).weekday() == 6:
+            self[datetime.date(year, AUG, 10) + datetime.timedelta(days=1)] = name
+        elif year > 2015 and  datetime.date(year, AUG, 10).weekday() in (2,3):
+            self[datetime.date(year, AUG, 10) + rd(weekday=FR)] = name
         else:
-            self[date(year, AUG, 10)] = name       
+            self[datetime.date(year, AUG, 10)] = name       
         
         # Guayaquil's independence, the rules are the same as the labor day
         name = "Independencia de Guayaquil [Guayaquil's Independence]"
-        if year > 2015 and date(year, OCT, 9).weekday() in (5,1):
-            self[date(year, OCT, 9) - timedelta(days=1)] = name
-        elif year > 2015 and date(year, OCT, 9).weekday() == 6:
-            self[date(year, OCT, 9) + timedelta(days=1)] = name
-        elif year > 2015 and  date(year, MAY, 1).weekday() in (2,3):
-            self[date(year, OCT, 9) + rd(weekday=FR)] = name
+        if year > 2015 and datetime.date(year, OCT, 9).weekday() in (5,1):
+            self[datetime.date(year, OCT, 9) - datetime.timedelta(days=1)] = name
+        elif year > 2015 and datetime.date(year, OCT, 9).weekday() == 6:
+            self[datetime.date(year, OCT, 9) + datetime.timedelta(days=1)] = name
+        elif year > 2015 and  datetime.date(year, MAY, 1).weekday() in (2,3):
+            self[datetime.date(year, OCT, 9) + rd(weekday=FR)] = name
         else:
-            self[date(year, OCT, 9)] = name        
+            self[datetime.date(year, OCT, 9)] = name        
         
         # Day of the Dead and
         namedd = "Día de los difuntos [Day of the Dead]" 
@@ -128,37 +128,37 @@ class HolidayEcuador(HolidayBase):
         #(Law 858/Reform Law to the LOSEP (in force since December 21, 2016 /R.O # 906)) 
         #For national and/or local holidays that coincide on continuous days, 
         #the following rules will apply:
-        if (date(year, NOV, 2).weekday() == 5 and  date(year, NOV, 3).weekday() == 6):
-            self[date(year, NOV, 2) - timedelta(days=1)] = namedd
-            self[date(year, NOV, 3) + timedelta(days=1)] = nameic     
-        elif (date(year, NOV, 3).weekday() == 2):
-            self[date(year, NOV, 2)] = namedd
-            self[date(year, NOV, 3) - timedelta(days=2)] = nameic
-        elif (date(year, NOV, 3).weekday() == 3):
-            self[date(year, NOV, 3)] = nameic
-            self[date(year, NOV, 2) + timedelta(days=2)] = namedd
-        elif (date(year, NOV, 3).weekday() == 5):
-            self[date(year, NOV, 2)] =  namedd
-            self[date(year, NOV, 3) - timedelta(days=2)] = nameic
-        elif (date(year, NOV, 3).weekday() == 0):
-            self[date(year, NOV, 3)] = nameic
-            self[date(year, NOV, 2) + timedelta(days=2)] = namedd
+        if (datetime.date(year, NOV, 2).weekday() == 5 and  datetime.date(year, NOV, 3).weekday() == 6):
+            self[datetime.date(year, NOV, 2) - datetime.timedelta(days=1)] = namedd
+            self[datetime.date(year, NOV, 3) + datetime.timedelta(days=1)] = nameic     
+        elif (datetime.date(year, NOV, 3).weekday() == 2):
+            self[datetime.date(year, NOV, 2)] = namedd
+            self[datetime.date(year, NOV, 3) - datetime.timedelta(days=2)] = nameic
+        elif (datetime.date(year, NOV, 3).weekday() == 3):
+            self[datetime.date(year, NOV, 3)] = nameic
+            self[datetime.date(year, NOV, 2) + datetime.timedelta(days=2)] = namedd
+        elif (datetime.date(year, NOV, 3).weekday() == 5):
+            self[datetime.date(year, NOV, 2)] =  namedd
+            self[datetime.date(year, NOV, 3) - datetime.timedelta(days=2)] = nameic
+        elif (datetime.date(year, NOV, 3).weekday() == 0):
+            self[datetime.date(year, NOV, 3)] = nameic
+            self[datetime.date(year, NOV, 2) + datetime.timedelta(days=2)] = namedd
         else:
-            self[date(year, NOV, 2)] = namedd
-            self[date(year, NOV, 3)] = nameic  
+            self[datetime.date(year, NOV, 2)] = namedd
+            self[datetime.date(year, NOV, 3)] = nameic  
             
         # Foundation of Quito, applies only to Pichincha province, 
         # the rules are the same as the labor day
         name = "Fundación de Quito [Foundation of Quito]"        
         if self.prov in ("EC-P"):
-            if year > 2015 and date(year, DEC, 6).weekday() in (5,1):
-                self[date(year, DEC, 6) - timedelta(days=1)] = name
-            elif year > 2015 and date(year, DEC, 6).weekday() == 6:
-                self[(date(year, DEC, 6).weekday()) + timedelta(days=1)] =name
-            elif year > 2015 and  date(year, DEC, 6).weekday() in (2,3):
-                self[date(year, DEC, 6) + rd(weekday=FR)] = name
+            if year > 2015 and datetime.date(year, DEC, 6).weekday() in (5,1):
+                self[datetime.date(year, DEC, 6) - datetime.timedelta(days=1)] = name
+            elif year > 2015 and datetime.date(year, DEC, 6).weekday() == 6:
+                self[(datetime.date(year, DEC, 6).weekday()) + datetime.timedelta(days=1)] =name
+            elif year > 2015 and  datetime.date(year, DEC, 6).weekday() in (2,3):
+                self[datetime.date(year, DEC, 6) + rd(weekday=FR)] = name
             else:
-                self[date(year, DEC, 6)] = name
+                self[datetime.date(year, DEC, 6)] = name
 
 class PicoPlaca:
     """
