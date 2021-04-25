@@ -45,6 +45,9 @@ To use the [abstract Public Holidays API](https://www.abstractapi.com/holidays-a
 ```
 $ python pico_y_placa.py -p EBA-0234 -d 2021-04-23 -t 15:15
 The vehicle with plate EBA-0234 CAN be on the road on 2021-04-23 at 15:15.
+
+$ python pico_y_placa.py -p EBA-0234 -d 2021-04-27 -t 17:00
+The vehicle with plate EBA-0234 CANNOT be on the road on 2021-04-27 at 17:00.
 ```
 
 ## Automated Testing
